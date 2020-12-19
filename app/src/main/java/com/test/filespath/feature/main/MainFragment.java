@@ -23,7 +23,7 @@ import butterknife.BindView;
 
 public class MainFragment extends BaseFragment<MainViewModel> {
 
-    private final int requestCode = 1234;
+    private final int PERMISSION_REQUEST_CODE = 1234;
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -50,7 +50,7 @@ public class MainFragment extends BaseFragment<MainViewModel> {
         initView();
         observeViewMode();
         if (isPermissionNeeded()) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, requestCode);
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
         } else {
             listExternalStorage();
         }
@@ -75,7 +75,7 @@ public class MainFragment extends BaseFragment<MainViewModel> {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == this.requestCode) {
+        if (requestCode == this.PERMISSION_REQUEST_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 listExternalStorage();
             } else {
