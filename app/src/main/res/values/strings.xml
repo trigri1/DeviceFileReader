@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">FilesPath</string>
+    <string name="permission_message">Storage permission required to list files.</string>
+</resources>
