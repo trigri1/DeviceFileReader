@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
 import com.test.filespath.feature.base.BaseViewModel;
 import com.test.filespath.feature.main.reader.FileModel;
 import com.test.filespath.feature.main.reader.FileReader;
@@ -34,13 +35,19 @@ public class MainViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> _searchOptionsVisibility = new MutableLiveData<Boolean>();
     protected LiveData<Boolean> searchOptionsVisibility = _searchOptionsVisibility;
 
+    private final MutableLiveData<SearchModel> _saveSearch = new MutableLiveData<SearchModel>();
+    protected LiveData<SearchModel> saveSearch = _saveSearch;
+
     private final List<FileModel> filesList = new ArrayList<FileModel>();
 
     private final List<FileModel> originalList = new ArrayList<FileModel>();
 
+    private Gson gson;
+
     @Inject
-    public MainViewModel(SchedulerProvider schedulerProvider, CompositeDisposable compositeDisposable) {
+    public MainViewModel(Gson gson, SchedulerProvider schedulerProvider, CompositeDisposable compositeDisposable) {
         super(schedulerProvider, compositeDisposable);
+        this.gson = gson;
     }
 
     public void readAllFiles(List<File> directoryList) {
@@ -136,7 +143,16 @@ public class MainViewModel extends BaseViewModel {
     }
 
     public void onSaveSearchResults() {
+        List<FileModel> list = _allFiles.getValue();
+        if (list != null && !list.isEmpty()) {
 
+            String result = gson.toJson(list);
+            SearchModel searchModel = new SearchModel();
+            searchModel.payload = result;
+            searchModel.name = list.get(0).query + System.currentTimeMillis() + ".txt";
+            _saveSearch.postValue(searchModel);
+            Log.e("listExternalStorage", result);
+        }
     }
 
     public void onItemClick(FileModel fileModel) {

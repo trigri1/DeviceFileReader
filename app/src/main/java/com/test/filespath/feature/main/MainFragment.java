@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,7 +26,10 @@ import com.test.filespath.R;
 import com.test.filespath.feature.base.BaseFragment;
 import com.test.filespath.feature.main.reader.FileModel;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,9 +104,7 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
     }
 
     private void setListeners() {
-        tvSaveResult.setOnClickListener(v -> {
-
-        });
+        tvSaveResult.setOnClickListener(v -> viewModel.onSaveSearchResults());
     }
 
     private void observeViewMode() {
@@ -128,6 +130,23 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
                 gSearchOptions.setVisibility(View.GONE);
             }
         });
+
+        viewModel.saveSearch.observe(getViewLifecycleOwner(), this::onSaveSearch);
+    }
+
+    //https://blog.cindypotvin.com/saving-data-to-a-file-in-your-android-application/
+    public void onSaveSearch(SearchModel searchModel) {
+        try {
+            File testFile = new File(requireContext().getFilesDir(), searchModel.name);
+            if (!testFile.exists())
+                testFile.createNewFile();
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(testFile, true));
+            writer.write(searchModel.payload);
+            writer.close();
+        } catch (IOException e) {
+            Log.e("ReadWriteFile", "Unable to write to the file.", e);
+        }
     }
 
     private boolean isPermissionNeeded() {
@@ -136,7 +155,8 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == this.PERMISSION_REQUEST_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -147,11 +167,16 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
         }
     }
 
+    //    https://gist.github.com/lopspower/76421751b21594c69eb2
     private void listExternalStorage() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-
+            File parentFile = requireContext().getFilesDir().getParentFile();
             List<File> directoryList = new ArrayList<File>();
+
+            if (parentFile != null) {
+                directoryList.add(parentFile);
+            }
             directoryList.add(Environment.getExternalStorageDirectory());
             directoryList.add(Environment.getRootDirectory());
             directoryList.add(Environment.getDataDirectory());

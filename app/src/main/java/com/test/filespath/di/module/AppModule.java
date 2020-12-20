@@ -2,6 +2,7 @@ package com.test.filespath.di.module;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
 import com.test.filespath.FilesApplication;
 import com.test.filespath.rx.AppSchedulerProvider;
 import com.test.filespath.rx.SchedulerProvider;
@@ -25,6 +26,12 @@ public class AppModule {
     @Provides
     SchedulerProvider provideSchedulers() {
         return new AppSchedulerProvider();
+    }
+
+    @Singleton
+    @Provides
+    Gson provideGson() {
+        return new Gson();
     }
 
     @Provides
