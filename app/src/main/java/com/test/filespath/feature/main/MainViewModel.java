@@ -15,9 +15,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 
 
 public class MainViewModel extends BaseViewModel {
@@ -33,24 +31,28 @@ public class MainViewModel extends BaseViewModel {
         super(schedulerProvider, compositeDisposable);
     }
 
-    public void readAllFiles(File externalStorageDirectory) {
-        readFiles(externalStorageDirectory);
+    public void readAllFiles(List<File> directoryList) {
+        readDirectoryList(directoryList);
     }
 
-    private void readFiles(File directory) {
-        compositeDisposable.add(Observable.fromPublisher(new FileReader(directory))
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(filesList::add,
+    private void readDirectoryList(List<File> directoryList) {
+        readFiles(directoryList);
+    }
+
+    private void readFiles(List<File> files) {
+        compositeDisposable.add(Observable.fromIterable(files)
+                .subscribeOn(schedulerProvider.io())
+                .observeOn(schedulerProvider.ui())
+                .concatMap(file -> Observable.fromPublisher(new FileReader(file))
+                ).subscribe(filesList::add,
                         throwable -> Log.e("listExternalStorage", "Error Reading"),
-                        () -> _allFiles.postValue(filesList)
-                ));
+                        () -> _allFiles.postValue(filesList))
+        );
     }
 
     public void sortAlphabetically() {
-        Log.e("listExternalStorage", "sortAlphabetically>");
         if (_allFiles.getValue() != null) {
-
+            clearList();
             compositeDisposable.add(Observable.fromIterable(_allFiles.getValue())
                     .toSortedList(FileModel::compareTo)
                     .subscribeOn(schedulerProvider.io())
@@ -64,10 +66,25 @@ public class MainViewModel extends BaseViewModel {
     }
 
     public void sortChronologically() {
-        Log.e("listExternalStorage", "sortChronologically");
+        if (_allFiles.getValue() != null) {
+            clearList();
+            compositeDisposable.add(Observable.fromIterable(_allFiles.getValue())
+                    .toSortedList((f1, f2) -> f1.lastModified.compareTo(f2.lastModified))
+                    .subscribeOn(schedulerProvider.io())
+                    .observeOn(schedulerProvider.ui())
+                    .subscribe(
+                            list -> _allFiles.postValue(list),
+                            throwable -> Log.e("listExternalStorage", "Error Sorting Alphabetically")
+                    ));
+
+        }
     }
 
     public void sortExtension() {
         Log.e("listExternalStorage", "sortExtension");
+    }
+
+    private void clearList() {
+        _allFiles.postValue(new ArrayList<FileModel>());
     }
 }

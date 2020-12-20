@@ -21,6 +21,8 @@ import com.test.filespath.R;
 import com.test.filespath.feature.base.BaseFragment;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -97,15 +99,19 @@ public class MainFragment extends BaseFragment<MainViewModel> {
     private void listExternalStorage() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            File externalStorageDirectory = Environment.getExternalStorageDirectory();
-            viewModel.readAllFiles(externalStorageDirectory);
+
+            List<File> directoryList = new ArrayList<File>();
+            directoryList.add(Environment.getExternalStorageDirectory());
+            directoryList.add(Environment.getRootDirectory());
+            directoryList.add(Environment.getDataDirectory());
+            directoryList.add(Environment.getDownloadCacheDirectory());
+            viewModel.readAllFiles(directoryList);
         }
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
-//        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override

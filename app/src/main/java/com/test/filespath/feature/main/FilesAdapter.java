@@ -1,17 +1,18 @@
 package com.test.filespath.feature.main;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.test.filespath.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -19,22 +20,29 @@ import butterknife.ButterKnife;
 
 public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FileViewHolder> {
 
-    private final List<FileModel> list = new ArrayList();
+    private final DiffUtil.ItemCallback<FileModel> diffUtilCallback = new DiffUtil.ItemCallback<FileModel>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull FileModel oldItem, @NonNull FileModel newItem) {
+            Log.e("listExternalStorage", oldItem.hashCode() + "  <====>  " + newItem.hashCode());
+            return oldItem.hashCode() == newItem.hashCode();
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull FileModel oldItem, @NonNull FileModel newItem) {
+            return oldItem.name.equalsIgnoreCase(newItem.name)
+                    && oldItem.path.equalsIgnoreCase(newItem.path)
+                    && oldItem.size == newItem.size;
+        }
+    };
+
+    private final AsyncListDiffer<FileModel> differ = new AsyncListDiffer(this, diffUtilCallback);
 
     public FilesAdapter() {
 
     }
 
     public void updateList(List<FileModel> newList) {
-        if (list.isEmpty()) {
-            list.addAll(newList);
-            notifyDataSetChanged();
-        } else {
-            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new FilePathDillCallBack(list, newList));
-            list.clear();
-            list.addAll(newList);
-            diffResult.dispatchUpdatesTo(this);
-        }
+        differ.submitList(newList);
     }
 
     @NonNull
@@ -46,12 +54,12 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FileViewHold
 
     @Override
     public void onBindViewHolder(@NonNull FileViewHolder holder, int position) {
-        holder.bind(list.get(position));
+        holder.bind(differ.getCurrentList().get(position));
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return differ.getCurrentList().size();
     }
 
     class FileViewHolder extends RecyclerView.ViewHolder {

@@ -40,16 +40,12 @@ public class FileReader implements Publisher<FileModel> {
                         fileModel.name = file.getName();
                         fileModel.path = file.getAbsolutePath();
                         fileModel.size = file.getTotalSpace();
+                        fileModel.lastModified = file.lastModified();
 
                         subscriber.onNext(fileModel);
-
-//                        allFiles.add(fileModel);
-//                        txtFiles.append(file.absolutePath + "\n")
                     }
                 }
             }
         }
-
-//        return allFiles;
     }
 }
