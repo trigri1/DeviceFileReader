@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,8 +37,7 @@ public class MainFragment extends BaseFragment<MainViewModel> {
     ViewModelProvider.Factory viewModelFactory;
 
     private final FilesAdapter adapter = new FilesAdapter();
-
-
+    
     @Override
     public int getLayoutId() {
         return R.layout.fragment_main;
@@ -112,19 +112,35 @@ public class MainFragment extends BaseFragment<MainViewModel> {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
+        SearchView searchView = (SearchView) menu.findItem(R.id.item_search).getActionView();
+
+        if (searchView != null) {
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    viewModel.onSearch(query);
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    return false;
+                }
+            });
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.item_search:
+                viewModel.onSortExtension();
+                break;
             case R.id.item_alphabetically:
-                viewModel.sortAlphabetically();
+                viewModel.onSortAlphabetically();
                 break;
             case R.id.item_chronologically:
-                viewModel.sortChronologically();
-                break;
-            case R.id.action_extension:
-                viewModel.sortExtension();
+                viewModel.onSortChronologically();
                 break;
         }
 

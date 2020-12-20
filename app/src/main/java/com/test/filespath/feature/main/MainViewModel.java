@@ -50,7 +50,7 @@ public class MainViewModel extends BaseViewModel {
         );
     }
 
-    public void sortAlphabetically() {
+    public void onSortAlphabetically() {
         if (_allFiles.getValue() != null) {
             clearList();
             compositeDisposable.add(Observable.fromIterable(_allFiles.getValue())
@@ -65,7 +65,7 @@ public class MainViewModel extends BaseViewModel {
         }
     }
 
-    public void sortChronologically() {
+    public void onSortChronologically() {
         if (_allFiles.getValue() != null) {
             clearList();
             compositeDisposable.add(Observable.fromIterable(_allFiles.getValue())
@@ -80,8 +80,23 @@ public class MainViewModel extends BaseViewModel {
         }
     }
 
-    public void sortExtension() {
+    public void onSortExtension() {
         Log.e("listExternalStorage", "sortExtension");
+    }
+
+    public void onSearch(String query) {
+        Log.e("listExternalStorage", "Query = " + query);
+        clearList();
+        compositeDisposable.add(Observable.fromIterable(_allFiles.getValue())
+                .subscribeOn(schedulerProvider.io())
+                .observeOn(schedulerProvider.ui())
+                .flatMap(Observable::just)
+                .filter(file -> file.name.contains(query))
+                .toList()
+                .subscribe(
+                        list -> _allFiles.postValue(list),
+                        throwable -> Log.e("listExternalStorage", "Error Sorting Alphabetically")
+                ));
     }
 
     private void clearList() {

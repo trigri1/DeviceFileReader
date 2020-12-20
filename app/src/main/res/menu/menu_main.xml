@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
+    <item
+        android:id="@+id/item_search"
+        android:icon="@drawable/ic_search_24"
+        android:title="@string/menu_item_search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/item_alphabetically"
@@ -17,7 +23,7 @@
         app:showAsAction="collapseActionView" />
 
     <item
-        android:id="@+id/action_extension"
+        android:id="@+id/item_extension"
         android:orderInCategory="300"
         android:title="@string/menu_item_extension"
         app:showAsAction="collapseActionView" />
