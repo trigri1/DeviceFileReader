@@ -23,6 +23,9 @@ public class MainViewModel extends BaseViewModel {
     private final MutableLiveData<List<FileModel>> _allFiles = new MutableLiveData<List<FileModel>>();
     protected LiveData<List<FileModel>> allFiles = _allFiles;
 
+    private final MutableLiveData<FileModel> _toDetail = new MutableLiveData<FileModel>();
+    protected LiveData<FileModel> toDetail = _toDetail;
+
     private final List<FileModel> filesList = new ArrayList<FileModel>();
 
     private final List<FileModel> originalList = new ArrayList<FileModel>();
@@ -119,6 +122,10 @@ public class MainViewModel extends BaseViewModel {
                         _allFiles::postValue,
                         throwable -> Log.e("listExternalStorage", "Error onSearch")
                 ));
+    }
+
+    public void onItemClick(FileModel fileModel) {
+        _toDetail.postValue(fileModel);
     }
 
     private void clearList() {

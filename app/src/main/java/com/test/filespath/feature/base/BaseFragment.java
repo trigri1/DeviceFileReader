@@ -10,7 +10,7 @@ import androidx.annotation.LayoutRes;
 import butterknife.ButterKnife;
 import dagger.android.support.DaggerFragment;
 
-public abstract class BaseFragment<V> extends DaggerFragment {
+public abstract class BaseFragment<V extends BaseViewModel> extends DaggerFragment {
 
     protected V viewModel;
 

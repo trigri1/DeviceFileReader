@@ -2,11 +2,15 @@ package com.test.filespath.feature.main;
 
 import android.content.Context;
 import android.net.Uri;
+import android.text.format.Formatter;
 
 import java.io.File;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
-public class FileModel implements Comparable<FileModel> {
+public class FileModel implements Comparable<FileModel>, Serializable {
     public String path;
     public String name;
     public long size;
@@ -21,8 +25,17 @@ public class FileModel implements Comparable<FileModel> {
         }
     }
 
-    public Uri getFileUri(Context context) {
+    public Uri getFileUri() {
         return Uri.fromFile(new File(path));
+    }
+
+    public String getSizeInMb(Context context) {
+        return Formatter.formatFileSize(context, new File(path).length());
+    }
+
+    public String getLastModifiedDate() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        return formatter.format(new Date(lastModified));
     }
 
     @Override

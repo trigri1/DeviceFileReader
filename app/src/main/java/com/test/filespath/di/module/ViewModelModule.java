@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.test.filespath.di.ViewModelKey;
 import com.test.filespath.feature.base.ViewModelProviderFactory;
+import com.test.filespath.feature.detail.DetailViewModel;
 import com.test.filespath.feature.main.MainViewModel;
 
 import dagger.Binds;
@@ -21,5 +22,10 @@ public abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(MainViewModel.class)
-    public abstract ViewModel bindsAuthViewModel(MainViewModel viewModel);
+    public abstract ViewModel bindsMainViewModel(MainViewModel viewModel);
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DetailViewModel.class)
+    public abstract ViewModel bindsDetailViewModel(DetailViewModel viewModel);
 }

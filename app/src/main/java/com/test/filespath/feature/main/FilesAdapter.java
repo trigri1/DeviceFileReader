@@ -24,6 +24,12 @@ import butterknife.ButterKnife;
 
 public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FileViewHolder> {
 
+    private OnItemClickListener onItemClickListener;
+
+    public FilesAdapter(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
     private final DiffUtil.ItemCallback<FileModel> diffUtilCallback = new DiffUtil.ItemCallback<FileModel>() {
         @Override
         public boolean areItemsTheSame(@NonNull FileModel oldItem, @NonNull FileModel newItem) {
@@ -40,10 +46,6 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FileViewHold
     };
 
     private final AsyncListDiffer<FileModel> differ = new AsyncListDiffer<FileModel>(this, diffUtilCallback);
-
-    public FilesAdapter() {
-
-    }
 
     public void updateList(List<FileModel> newList) {
         differ.submitList(newList);
@@ -92,6 +94,12 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FileViewHold
             } else {
                 tvFileName.setText(title);
             }
+
+            itemView.setOnClickListener(v -> onItemClickListener.OnItemCLick(fileModel));
         }
+    }
+
+    interface OnItemClickListener {
+        void OnItemCLick(FileModel fileModel);
     }
 }

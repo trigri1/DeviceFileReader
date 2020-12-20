@@ -1,7 +1,5 @@
 package com.test.filespath.feature.main;
 
-import android.util.Log;
-
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -39,7 +37,6 @@ public class FileReader implements Publisher<FileModel> {
                     if (file.isDirectory()) {
                         listFiles(file);
                     } else {
-                        Log.e("listExternalStorage", file.getAbsolutePath());
                         FileModel fileModel = new FileModel();
                         fileModel.name = file.getName();
                         fileModel.path = file.getAbsolutePath();

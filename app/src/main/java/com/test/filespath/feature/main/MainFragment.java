@@ -29,14 +29,25 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 
-public class MainFragment extends BaseFragment<MainViewModel> {
+public class MainFragment extends BaseFragment<MainViewModel> implements FilesAdapter.OnItemClickListener {
+
+
+    public static MainFragment newInstance() {
+        return new MainFragment();
+    }
 
     private final int PERMISSION_REQUEST_CODE = 1234;
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
 
-    private final FilesAdapter adapter = new FilesAdapter();
+    private final FilesAdapter adapter = new FilesAdapter(this);
+
+    private MainNavigation mainNavigation;
+
+    public void setMainNavigation(MainNavigation mainNavigation) {
+        this.mainNavigation = mainNavigation;
+    }
 
     @Override
     public int getLayoutId() {
@@ -76,6 +87,12 @@ public class MainFragment extends BaseFragment<MainViewModel> {
         viewModel.allFiles.observe(getViewLifecycleOwner(), fileModels -> {
             if (fileModels != null)
                 adapter.updateList(fileModels);
+        });
+
+        viewModel.toDetail.observe(getViewLifecycleOwner(), fileModel -> {
+            if (fileModel != null) {
+                mainNavigation.toDetailScreen(fileModel);
+            }
         });
     }
 
@@ -150,5 +167,10 @@ public class MainFragment extends BaseFragment<MainViewModel> {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void OnItemCLick(FileModel fileModel) {
+        viewModel.onItemClick(fileModel);
     }
 }
