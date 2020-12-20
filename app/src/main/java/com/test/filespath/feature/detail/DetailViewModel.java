@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.test.filespath.feature.base.BaseViewModel;
-import com.test.filespath.feature.main.FileModel;
+import com.test.filespath.feature.main.reader.FileModel;
 import com.test.filespath.rx.SchedulerProvider;
 
 import javax.inject.Inject;

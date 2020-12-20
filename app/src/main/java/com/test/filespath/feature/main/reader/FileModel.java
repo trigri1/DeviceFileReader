@@ -1,4 +1,4 @@
-package com.test.filespath.feature.main;
+package com.test.filespath.feature.main.reader;
 
 import android.content.Context;
 import android.net.Uri;

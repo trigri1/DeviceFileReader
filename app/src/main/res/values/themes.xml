@@ -12,7 +12,7 @@
     </style>
 
     <style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.ActionBar">
-        <!--        <item name="colorControlNormal">@color/white</item>-->
+        <item name="colorControlNormal">@color/white</item>
         <item name="android:background">@color/purple_700</item>
         <item name="titleTextColor">@color/white</item>
         <item name="android:elevation">4dp</item>

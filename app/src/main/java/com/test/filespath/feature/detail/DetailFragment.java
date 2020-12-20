@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.test.filespath.R;
 import com.test.filespath.feature.base.BaseFragment;
-import com.test.filespath.feature.main.FileModel;
+import com.test.filespath.feature.main.reader.FileModel;
 
 import javax.inject.Inject;
 

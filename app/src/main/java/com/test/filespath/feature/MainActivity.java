@@ -4,9 +4,9 @@ import android.os.Bundle;
 
 import com.test.filespath.R;
 import com.test.filespath.feature.detail.DetailFragment;
-import com.test.filespath.feature.main.FileModel;
 import com.test.filespath.feature.main.MainFragment;
 import com.test.filespath.feature.main.MainNavigation;
+import com.test.filespath.feature.main.reader.FileModel;
 
 import butterknife.ButterKnife;
 import dagger.android.support.DaggerAppCompatActivity;

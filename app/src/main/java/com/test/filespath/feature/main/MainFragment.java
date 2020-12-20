@@ -8,6 +8,8 @@ import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,11 +17,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.Group;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.test.filespath.R;
 import com.test.filespath.feature.base.BaseFragment;
+import com.test.filespath.feature.main.reader.FileModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,7 +35,6 @@ import butterknife.BindView;
 
 public class MainFragment extends BaseFragment<MainViewModel> implements FilesAdapter.OnItemClickListener {
 
-
     public static MainFragment newInstance() {
         return new MainFragment();
     }
@@ -40,6 +43,21 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
+
+    @BindView(R.id.rv_file_names)
+    RecyclerView rvFileNames;
+
+    @BindView(R.id.toolbar_main)
+    Toolbar toolbarMain;
+
+    @BindView(R.id.tv_number_of_matches)
+    TextView tvNumberOfMatches;
+
+    @BindView(R.id.tv_save_result)
+    TextView tvSaveResult;
+
+    @BindView(R.id.g_search_options)
+    Group gSearchOptions;
 
     private final FilesAdapter adapter = new FilesAdapter(this);
 
@@ -59,17 +77,16 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
         return new ViewModelProvider(this, viewModelFactory).get(MainViewModel.class);
     }
 
-    @BindView(R.id.rv_file_names)
-    RecyclerView rvFileNames;
-
-    @BindView(R.id.toolbar_main)
-    Toolbar toolbarMain;
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initView();
         observeViewMode();
+        setListeners();
+        loadData();
+    }
+
+    private void loadData() {
         if (isPermissionNeeded()) {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
         } else {
@@ -79,8 +96,13 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
 
     private void initView() {
         rvFileNames.setAdapter(adapter);
-
         ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbarMain);
+    }
+
+    private void setListeners() {
+        tvSaveResult.setOnClickListener(v -> {
+
+        });
     }
 
     private void observeViewMode() {
@@ -92,6 +114,18 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
         viewModel.toDetail.observe(getViewLifecycleOwner(), fileModel -> {
             if (fileModel != null) {
                 mainNavigation.toDetailScreen(fileModel);
+            }
+        });
+
+        viewModel.searchResult.observe(getViewLifecycleOwner(), result -> {
+            tvNumberOfMatches.setText("Matches: " + result);
+        });
+
+        viewModel.searchOptionsVisibility.observe(getViewLifecycleOwner(), visible -> {
+            if (visible) {
+                gSearchOptions.setVisibility(View.VISIBLE);
+            } else {
+                gSearchOptions.setVisibility(View.GONE);
             }
         });
     }

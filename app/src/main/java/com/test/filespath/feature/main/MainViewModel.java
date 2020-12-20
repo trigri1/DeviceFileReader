@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.test.filespath.feature.base.BaseViewModel;
+import com.test.filespath.feature.main.reader.FileModel;
+import com.test.filespath.feature.main.reader.FileReader;
 import com.test.filespath.rx.SchedulerProvider;
 
 import java.io.File;
@@ -25,6 +27,12 @@ public class MainViewModel extends BaseViewModel {
 
     private final MutableLiveData<FileModel> _toDetail = new MutableLiveData<FileModel>();
     protected LiveData<FileModel> toDetail = _toDetail;
+
+    private final MutableLiveData<Integer> _searchResult = new MutableLiveData<Integer>();
+    protected LiveData<Integer> searchResult = _searchResult;
+
+    private final MutableLiveData<Boolean> _searchOptionsVisibility = new MutableLiveData<Boolean>();
+    protected LiveData<Boolean> searchOptionsVisibility = _searchOptionsVisibility;
 
     private final List<FileModel> filesList = new ArrayList<FileModel>();
 
@@ -118,10 +126,17 @@ public class MainViewModel extends BaseViewModel {
                     return matched;
                 })
                 .toList()
-                .subscribe(
-                        _allFiles::postValue,
+                .subscribe(fileModels -> {
+                            _searchResult.postValue(fileModels.size());
+                            _allFiles.postValue(fileModels);
+                            _searchOptionsVisibility.postValue(!query.isEmpty());
+                        },
                         throwable -> Log.e("listExternalStorage", "Error onSearch")
                 ));
+    }
+
+    public void onSaveSearchResults() {
+
     }
 
     public void onItemClick(FileModel fileModel) {

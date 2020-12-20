@@ -16,6 +16,41 @@
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/menu_main" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gline_fifty_percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/tv_number_of_matches"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        app:layout_constraintEnd_toStartOf="@id/gline_fifty_percent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_main" />
+
+    <TextView
+        android:id="@+id/tv_save_result"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/save_results"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/gline_fifty_percent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_main" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/g_search_options"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="tv_number_of_matches,tv_save_result" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_file_names"
         android:layout_width="match_parent"
@@ -24,6 +59,6 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_main"
+        app:layout_constraintTop_toBottomOf="@id/tv_number_of_matches"
         tools:listitem="@layout/item_file" />
 </androidx.constraintlayout.widget.ConstraintLayout>

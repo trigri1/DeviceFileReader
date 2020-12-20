@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.test.filespath.R;
+import com.test.filespath.feature.main.reader.FileModel;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 
 public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FileViewHolder> {
 
-    private OnItemClickListener onItemClickListener;
+    private final OnItemClickListener onItemClickListener;
 
     public FilesAdapter(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
@@ -33,7 +33,6 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FileViewHold
     private final DiffUtil.ItemCallback<FileModel> diffUtilCallback = new DiffUtil.ItemCallback<FileModel>() {
         @Override
         public boolean areItemsTheSame(@NonNull FileModel oldItem, @NonNull FileModel newItem) {
-            Log.e("listExternalStorage", oldItem.hashCode() + "  <====>  " + newItem.hashCode());
             return oldItem.hashCode() == newItem.hashCode();
         }
 
@@ -84,10 +83,6 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FileViewHold
             if (fileModel.query != null && !fileModel.query.isEmpty()) {
                 int startIndex = title.toLowerCase().indexOf(fileModel.query.toLowerCase());
                 int endIndex = startIndex + fileModel.query.length();
-
-                Log.e("Span", "startIndex = " + startIndex + " <=====> " + " endIndex = " + endIndex);
-                Log.e("Span", "name = " + title + " <=====> " + " query = " + fileModel.query);
-
                 SpannableString str = new SpannableString(title);
                 str.setSpan(new BackgroundColorSpan(Color.YELLOW), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 tvFileName.setText(str);
