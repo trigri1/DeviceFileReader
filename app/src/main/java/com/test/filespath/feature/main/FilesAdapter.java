@@ -1,5 +1,9 @@
 package com.test.filespath.feature.main;
 
+import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +39,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FileViewHold
         }
     };
 
-    private final AsyncListDiffer<FileModel> differ = new AsyncListDiffer(this, diffUtilCallback);
+    private final AsyncListDiffer<FileModel> differ = new AsyncListDiffer<FileModel>(this, diffUtilCallback);
 
     public FilesAdapter() {
 
@@ -73,7 +77,21 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FileViewHold
         }
 
         public void bind(FileModel fileModel) {
-            tvFileName.setText(fileModel.name);
+            String title = fileModel.name;
+
+            if (fileModel.query != null && !fileModel.query.isEmpty()) {
+                int startIndex = title.toLowerCase().indexOf(fileModel.query.toLowerCase());
+                int endIndex = startIndex + fileModel.query.length();
+
+                Log.e("Span", "startIndex = " + startIndex + " <=====> " + " endIndex = " + endIndex);
+                Log.e("Span", "name = " + title + " <=====> " + " query = " + fileModel.query);
+
+                SpannableString str = new SpannableString(title);
+                str.setSpan(new BackgroundColorSpan(Color.YELLOW), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                tvFileName.setText(str);
+            } else {
+                tvFileName.setText(title);
+            }
         }
     }
 }

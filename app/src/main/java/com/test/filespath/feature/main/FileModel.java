@@ -1,5 +1,9 @@
 package com.test.filespath.feature.main;
 
+import android.content.Context;
+import android.net.Uri;
+
+import java.io.File;
 import java.util.Objects;
 
 public class FileModel implements Comparable<FileModel> {
@@ -7,13 +11,18 @@ public class FileModel implements Comparable<FileModel> {
     public String name;
     public long size;
     public Long lastModified;
+    public String query;
 
     public String getExtension() {
         if (path.lastIndexOf(".") != -1) {
             return path.substring(path.lastIndexOf("."));
         } else {
-            return "No Extension";
+            return "NoExtension";
         }
+    }
+
+    public Uri getFileUri(Context context) {
+        return Uri.fromFile(new File(path));
     }
 
     @Override

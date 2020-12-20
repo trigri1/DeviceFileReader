@@ -6,8 +6,12 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileReader implements Publisher<FileModel> {
+
+    public static Map<String, Object> map = new HashMap<String, Object>();
 
     private Subscriber<? super FileModel> subscriber;
     private final File file;
@@ -41,6 +45,8 @@ public class FileReader implements Publisher<FileModel> {
                         fileModel.path = file.getAbsolutePath();
                         fileModel.size = file.getTotalSpace();
                         fileModel.lastModified = file.lastModified();
+
+                        map.put(fileModel.getExtension(), "");
 
                         subscriber.onNext(fileModel);
                     }

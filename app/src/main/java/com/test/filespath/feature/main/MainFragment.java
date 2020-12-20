@@ -129,7 +129,7 @@ public class MainFragment extends BaseFragment<MainViewModel> {
             });
 
             searchView.setOnCloseListener(() -> {
-                viewModel.onSearchClosed();
+                viewModel.onSearch("");
                 return false;
             });
         }

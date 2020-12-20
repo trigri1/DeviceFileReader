@@ -50,8 +50,26 @@ public class MainViewModel extends BaseViewModel {
                         () -> {
                             originalList.addAll(filesList);
                             _allFiles.postValue(filesList);
+                            sortIntoExtensionGroups(filesList);
                         }
                 ));
+    }
+
+    private void sortIntoExtensionGroups(List<FileModel> filesList) {
+        Log.e("Extensions", "Extension size =" + FileReader.map.size());
+//        compositeDisposable.add(Observable.fromIterable(filesList)
+//                .subscribeOn(schedulerProvider.io())
+//                .observeOn(schedulerProvider.ui())
+//                .groupBy(FileModel::getExtension)
+//                .flatMapSingle(Observable::toList)
+//                .subscribe(groups -> {
+//                            Log.e("groupBy", "" + groups);
+//                        },
+//                        throwable -> Log.e("listExternalStorage", "Error Reading"),
+//                        () -> {
+//
+//                        }
+//                ));
     }
 
     public void onSortAlphabetically() {
@@ -61,7 +79,7 @@ public class MainViewModel extends BaseViewModel {
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .subscribe(
-                        list -> _allFiles.postValue(list),
+                        _allFiles::postValue,
                         throwable -> Log.e("listExternalStorage", "Error Sorting Alphabetically")
                 ));
     }
@@ -73,7 +91,7 @@ public class MainViewModel extends BaseViewModel {
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .subscribe(
-                        list -> _allFiles.postValue(list),
+                        _allFiles::postValue,
                         throwable -> Log.e("listExternalStorage", "Error Sorting Chronologically")
                 ));
     }
@@ -84,24 +102,18 @@ public class MainViewModel extends BaseViewModel {
 
     public void onSearch(String query) {
         clearList();
-        compositeDisposable.add(Observable.fromIterable(originalList)
+        List<FileModel> listToSearch = new ArrayList<>(originalList);
+        compositeDisposable.add(Observable.fromIterable(listToSearch)
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .flatMap(Observable::just)
-                .filter(file -> file.name.toLowerCase().contains(query))
-                .toList()
-                .subscribe(
-                        _allFiles::postValue,
-                        throwable -> Log.e("listExternalStorage", "Error onSearch")
-                ));
-    }
-
-    public void onSearchClosed() {
-        clearList();
-
-        compositeDisposable.add(Observable.fromIterable(originalList)
-                .subscribeOn(schedulerProvider.io())
-                .observeOn(schedulerProvider.ui())
+                .filter(file -> {
+                    boolean matched = file.name.toLowerCase().contains(query);
+                    if (matched) {
+                        file.query = query;
+                    }
+                    return matched;
+                })
                 .toList()
                 .subscribe(
                         _allFiles::postValue,
