@@ -20,11 +20,12 @@ import io.reactivex.disposables.CompositeDisposable;
 
 public class MainViewModel extends BaseViewModel {
 
-    private MutableLiveData<List<FileModel>> _allFiles = new MutableLiveData<List<FileModel>>();
+    private final MutableLiveData<List<FileModel>> _allFiles = new MutableLiveData<List<FileModel>>();
     protected LiveData<List<FileModel>> allFiles = _allFiles;
 
     private final List<FileModel> filesList = new ArrayList<FileModel>();
 
+    private final List<FileModel> originalList = new ArrayList<FileModel>();
 
     @Inject
     public MainViewModel(SchedulerProvider schedulerProvider, CompositeDisposable compositeDisposable) {
@@ -46,38 +47,35 @@ public class MainViewModel extends BaseViewModel {
                 .concatMap(file -> Observable.fromPublisher(new FileReader(file))
                 ).subscribe(filesList::add,
                         throwable -> Log.e("listExternalStorage", "Error Reading"),
-                        () -> _allFiles.postValue(filesList))
-        );
+                        () -> {
+                            originalList.addAll(filesList);
+                            _allFiles.postValue(filesList);
+                        }
+                ));
     }
 
     public void onSortAlphabetically() {
-        if (_allFiles.getValue() != null) {
-            clearList();
-            compositeDisposable.add(Observable.fromIterable(_allFiles.getValue())
-                    .toSortedList(FileModel::compareTo)
-                    .subscribeOn(schedulerProvider.io())
-                    .observeOn(schedulerProvider.ui())
-                    .subscribe(
-                            list -> _allFiles.postValue(list),
-                            throwable -> Log.e("listExternalStorage", "Error Sorting Alphabetically")
-                    ));
-
-        }
+        clearList();
+        compositeDisposable.add(Observable.fromIterable(originalList)
+                .toSortedList(FileModel::compareTo)
+                .subscribeOn(schedulerProvider.io())
+                .observeOn(schedulerProvider.ui())
+                .subscribe(
+                        list -> _allFiles.postValue(list),
+                        throwable -> Log.e("listExternalStorage", "Error Sorting Alphabetically")
+                ));
     }
 
     public void onSortChronologically() {
-        if (_allFiles.getValue() != null) {
-            clearList();
-            compositeDisposable.add(Observable.fromIterable(_allFiles.getValue())
-                    .toSortedList((f1, f2) -> f1.lastModified.compareTo(f2.lastModified))
-                    .subscribeOn(schedulerProvider.io())
-                    .observeOn(schedulerProvider.ui())
-                    .subscribe(
-                            list -> _allFiles.postValue(list),
-                            throwable -> Log.e("listExternalStorage", "Error Sorting Alphabetically")
-                    ));
-
-        }
+        clearList();
+        compositeDisposable.add(Observable.fromIterable(originalList)
+                .toSortedList((f1, f2) -> f1.lastModified.compareTo(f2.lastModified))
+                .subscribeOn(schedulerProvider.io())
+                .observeOn(schedulerProvider.ui())
+                .subscribe(
+                        list -> _allFiles.postValue(list),
+                        throwable -> Log.e("listExternalStorage", "Error Sorting Chronologically")
+                ));
     }
 
     public void onSortExtension() {
@@ -85,17 +83,29 @@ public class MainViewModel extends BaseViewModel {
     }
 
     public void onSearch(String query) {
-        Log.e("listExternalStorage", "Query = " + query);
         clearList();
-        compositeDisposable.add(Observable.fromIterable(_allFiles.getValue())
+        compositeDisposable.add(Observable.fromIterable(originalList)
                 .subscribeOn(schedulerProvider.io())
                 .observeOn(schedulerProvider.ui())
                 .flatMap(Observable::just)
-                .filter(file -> file.name.contains(query))
+                .filter(file -> file.name.toLowerCase().contains(query))
                 .toList()
                 .subscribe(
-                        list -> _allFiles.postValue(list),
-                        throwable -> Log.e("listExternalStorage", "Error Sorting Alphabetically")
+                        _allFiles::postValue,
+                        throwable -> Log.e("listExternalStorage", "Error onSearch")
+                ));
+    }
+
+    public void onSearchClosed() {
+        clearList();
+
+        compositeDisposable.add(Observable.fromIterable(originalList)
+                .subscribeOn(schedulerProvider.io())
+                .observeOn(schedulerProvider.ui())
+                .toList()
+                .subscribe(
+                        _allFiles::postValue,
+                        throwable -> Log.e("listExternalStorage", "Error onSearch")
                 ));
     }
 

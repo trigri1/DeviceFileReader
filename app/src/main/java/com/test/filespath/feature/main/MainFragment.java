@@ -37,7 +37,7 @@ public class MainFragment extends BaseFragment<MainViewModel> {
     ViewModelProvider.Factory viewModelFactory;
 
     private final FilesAdapter adapter = new FilesAdapter();
-    
+
     @Override
     public int getLayoutId() {
         return R.layout.fragment_main;
@@ -126,6 +126,11 @@ public class MainFragment extends BaseFragment<MainViewModel> {
                 public boolean onQueryTextChange(String newText) {
                     return false;
                 }
+            });
+
+            searchView.setOnCloseListener(() -> {
+                viewModel.onSearchClosed();
+                return false;
             });
         }
     }
