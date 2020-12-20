@@ -42,8 +42,32 @@ public class MainViewModel extends BaseViewModel {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(filesList::add,
-                        throwable -> Log.e("listExternalStorage", "<=======Completed=====>"),
+                        throwable -> Log.e("listExternalStorage", "Error Reading"),
                         () -> _allFiles.postValue(filesList)
                 ));
+    }
+
+    public void sortAlphabetically() {
+        Log.e("listExternalStorage", "sortAlphabetically>");
+        if (_allFiles.getValue() != null) {
+
+            compositeDisposable.add(Observable.fromIterable(_allFiles.getValue())
+                    .toSortedList(FileModel::compareTo)
+                    .subscribeOn(schedulerProvider.io())
+                    .observeOn(schedulerProvider.ui())
+                    .subscribe(
+                            list -> _allFiles.postValue(list),
+                            throwable -> Log.e("listExternalStorage", "Error Sorting Alphabetically")
+                    ));
+
+        }
+    }
+
+    public void sortChronologically() {
+        Log.e("listExternalStorage", "sortChronologically");
+    }
+
+    public void sortExtension() {
+        Log.e("listExternalStorage", "sortExtension");
     }
 }

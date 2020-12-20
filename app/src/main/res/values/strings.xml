@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">FilesPath</string>
     <string name="permission_message">Storage permission required to list files.</string>
+    <string name="menu_item_alphabetically">Alphabetically</string>
+    <string name="menu_item_chronologically">Chronologically</string>
+    <string name="menu_item_extension">Extension</string>
 </resources>

@@ -5,10 +5,15 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,6 +49,9 @@ public class MainFragment extends BaseFragment<MainViewModel> {
     @BindView(R.id.rv_file_names)
     RecyclerView rvFileNames;
 
+    @BindView(R.id.toolbar_main)
+    Toolbar toolbarMain;
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -58,6 +66,8 @@ public class MainFragment extends BaseFragment<MainViewModel> {
 
     private void initView() {
         rvFileNames.setAdapter(adapter);
+
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbarMain);
     }
 
     private void observeViewMode() {
@@ -90,5 +100,28 @@ public class MainFragment extends BaseFragment<MainViewModel> {
             File externalStorageDirectory = Environment.getExternalStorageDirectory();
             viewModel.readAllFiles(externalStorageDirectory);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+//        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_alphabetically:
+                viewModel.sortAlphabetically();
+                break;
+            case R.id.item_chronologically:
+                viewModel.sortChronologically();
+                break;
+            case R.id.action_extension:
+                viewModel.sortExtension();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

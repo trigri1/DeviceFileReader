@@ -1,6 +1,6 @@
 package com.test.filespath.feature.main;
 
-public class FileModel {
+public class FileModel implements Comparable<FileModel> {
     public String path;
     public String name;
     public long size;
@@ -11,5 +11,10 @@ public class FileModel {
         } else {
             return "No Extension";
         }
+    }
+
+    @Override
+    public int compareTo(FileModel fileModel) {
+        return name.compareTo(fileModel.name);
     }
 }

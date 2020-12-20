@@ -20,6 +20,7 @@ public abstract class BaseFragment<V> extends DaggerFragment {
         View view = inflater.inflate(getLayoutId(), container, false);
         viewModel = getViewModel();
         ButterKnife.bind(this, view);
+        setHasOptionsMenu(true);
         return view;
     }
 
