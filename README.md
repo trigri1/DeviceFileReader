@@ -1,9 +1,9 @@
 # DeviceFileReader
-This app reads all the files from the device and displays it as list. This app gives user the oppertunity to sort list alphabetically, chronologically, and by extesion. There is also a detail screen that shows selected file's info.
+This app reads all the files from the device and displays it as a list. This app gives users the opportunity to sort files list alphabetically, chronologically, and by extension. There is also a detailed screen that shows the selected file's info.
 
 # Project Structure
 
-Project uses MVVM approach. Dagger2 is used for dependency injection. RxJava is also used.
+The project uses the MVVM approach. Dagger2 is used for dependency injection. RxJava is also used.
 
 # Requirements
 - Android SDK 21 or above
