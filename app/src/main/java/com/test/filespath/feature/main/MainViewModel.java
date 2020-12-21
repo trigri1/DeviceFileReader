@@ -79,28 +79,14 @@ public class MainViewModel extends BaseViewModel {
                         () -> {
                             originalList.addAll(filesList);
                             _allFiles.postValue(filesList);
-                            sortIntoExtensionGroups(filesList);
+                            sortIntoExtensionGroups();
                         }
                 ));
     }
 
-    private void sortIntoExtensionGroups(List<FileModel> filesList) {
+    private void sortIntoExtensionGroups() {
         Log.e("Extensions", "Extension size =" + FileReader.map.size());
         extensionsList.addAll(FileReader.map.keySet());
-
-//        compositeDisposable.add(Observable.fromIterable(filesList)
-//                .subscribeOn(schedulerProvider.io())
-//                .observeOn(schedulerProvider.ui())
-//                .groupBy(FileModel::getExtension)
-//                .flatMapSingle(Observable::toList)
-//                .subscribe(groups -> {
-//                            Log.e("groupBy", "" + groups);
-//                        },
-//                        throwable -> Log.e("listExternalStorage", "Error Reading"),
-//                        () -> {
-//
-//                        }
-//                ));
     }
 
     public void onSortAlphabetically() {

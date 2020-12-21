@@ -1,5 +1,7 @@
 package com.test.filespath.feature.main.reader;
 
+import android.util.Log;
+
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -42,6 +44,8 @@ public class FileReader implements Publisher<FileModel> {
                         fileModel.path = file.getAbsolutePath();
                         fileModel.size = file.getTotalSpace();
                         fileModel.lastModified = file.lastModified();
+
+                        Log.e("listExternalStorage", fileModel.path);
 
                         map.put(fileModel.getExtension(), "");
 
