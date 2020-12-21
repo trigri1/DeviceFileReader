@@ -20,6 +20,11 @@ public class TrampolineSchedulerProvider implements SchedulerProvider {
     }
 
     @Override
+    public Scheduler newThread() {
+        return Schedulers.trampoline();
+    }
+
+    @Override
     public Scheduler Queue() {
         return Schedulers.trampoline();
     }

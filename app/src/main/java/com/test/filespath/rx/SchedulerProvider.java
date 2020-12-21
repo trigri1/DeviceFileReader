@@ -13,6 +13,8 @@ public interface SchedulerProvider {
     Scheduler computation();
 
     Scheduler io();
+    
+    Scheduler newThread();
 
     Scheduler Queue();
 

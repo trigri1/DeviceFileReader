@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,6 +63,9 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
 
     @BindView(R.id.g_search_options)
     Group gSearchOptions;
+
+    @BindView(R.id.pb_circular)
+    ProgressBar pbCircular;
 
     private final FilesAdapter adapter = new FilesAdapter(this);
 
@@ -132,6 +136,14 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
         });
 
         viewModel.saveSearch.observe(getViewLifecycleOwner(), this::onSaveSearch);
+
+        viewModel.loading.observe(getViewLifecycleOwner(), loading -> {
+            if (loading) {
+                pbCircular.setVisibility(View.VISIBLE);
+            } else {
+                pbCircular.setVisibility(View.GONE);
+            }
+        });
     }
 
     //https://blog.cindypotvin.com/saving-data-to-a-file-in-your-android-application/
@@ -144,6 +156,8 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
             BufferedWriter writer = new BufferedWriter(new FileWriter(testFile, true));
             writer.write(searchModel.payload);
             writer.close();
+            String msg = getString(R.string.search_saved_message, searchModel.name);
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             Log.e("ReadWriteFile", "Unable to write to the file.", e);
         }

@@ -42,7 +42,10 @@ public class MainViewModel extends BaseViewModel {
 
     private final List<FileModel> originalList = new ArrayList<FileModel>();
 
-    private Gson gson;
+    private final MutableLiveData<Boolean> _loading = new MutableLiveData<Boolean>();
+    protected LiveData<Boolean> loading = _loading;
+
+    private final Gson gson;
 
     @Inject
     public MainViewModel(Gson gson, SchedulerProvider schedulerProvider, CompositeDisposable compositeDisposable) {
@@ -60,10 +63,12 @@ public class MainViewModel extends BaseViewModel {
 
     private void readFiles(List<File> files) {
         compositeDisposable.add(Observable.fromIterable(files)
-                .subscribeOn(schedulerProvider.io())
+                .subscribeOn(schedulerProvider.newThread())
                 .observeOn(schedulerProvider.ui())
-                .concatMap(file -> Observable.fromPublisher(new FileReader(file))
-                ).subscribe(filesList::add,
+                .doOnSubscribe(disposable -> _loading.postValue(true))
+                .doOnComplete(() -> _loading.postValue(false))
+                .concatMap(file -> Observable.fromPublisher(new FileReader(file)))
+                .subscribe(filesList::add,
                         throwable -> Log.e("listExternalStorage", "Error Reading"),
                         () -> {
                             originalList.addAll(filesList);

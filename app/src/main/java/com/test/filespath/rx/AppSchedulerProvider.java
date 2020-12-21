@@ -26,6 +26,11 @@ public class AppSchedulerProvider implements SchedulerProvider {
     }
 
     @Override
+    public Scheduler newThread() {
+        return Schedulers.newThread();
+    }
+
+    @Override
     public Scheduler Queue() {
         return Schedulers.trampoline();
     }

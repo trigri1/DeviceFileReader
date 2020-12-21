@@ -18,7 +18,6 @@ public class MainActivity extends DaggerAppCompatActivity implements MainNavigat
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
         addMainFragment();
     }
 
