@@ -38,12 +38,18 @@ public class MainViewModel extends BaseViewModel {
     private final MutableLiveData<SearchModel> _saveSearch = new MutableLiveData<SearchModel>();
     protected LiveData<SearchModel> saveSearch = _saveSearch;
 
+    private final MutableLiveData<List<String>> _extensions = new MutableLiveData<List<String>>();
+    protected LiveData<List<String>> extensions = _extensions;
+
     private final List<FileModel> filesList = new ArrayList<FileModel>();
 
     private final List<FileModel> originalList = new ArrayList<FileModel>();
 
     private final MutableLiveData<Boolean> _loading = new MutableLiveData<Boolean>();
     protected LiveData<Boolean> loading = _loading;
+
+    private ArrayList<String> extensionsList = new ArrayList<String>();
+
 
     private final Gson gson;
 
@@ -80,6 +86,8 @@ public class MainViewModel extends BaseViewModel {
 
     private void sortIntoExtensionGroups(List<FileModel> filesList) {
         Log.e("Extensions", "Extension size =" + FileReader.map.size());
+        extensionsList.addAll(FileReader.map.keySet());
+
 //        compositeDisposable.add(Observable.fromIterable(filesList)
 //                .subscribeOn(schedulerProvider.io())
 //                .observeOn(schedulerProvider.ui())
@@ -121,6 +129,7 @@ public class MainViewModel extends BaseViewModel {
 
     public void onSortExtension() {
         Log.e("listExternalStorage", "sortExtension");
+        _extensions.postValue(extensionsList);
     }
 
     public void onSearch(String query) {
@@ -132,6 +141,30 @@ public class MainViewModel extends BaseViewModel {
                 .flatMap(Observable::just)
                 .filter(file -> {
                     boolean matched = file.name.toLowerCase().contains(query);
+                    if (matched) {
+                        file.query = query;
+                    }
+                    return matched;
+                })
+                .toList()
+                .subscribe(fileModels -> {
+                            _searchResult.postValue(fileModels.size());
+                            _allFiles.postValue(fileModels);
+                            _searchOptionsVisibility.postValue(!query.isEmpty());
+                        },
+                        throwable -> Log.e("listExternalStorage", "Error onSearch")
+                ));
+    }
+
+    public void onExtensionSelected(String query) {
+        clearList();
+        List<FileModel> listToSearch = new ArrayList<>(originalList);
+        compositeDisposable.add(Observable.fromIterable(listToSearch)
+                .subscribeOn(schedulerProvider.io())
+                .observeOn(schedulerProvider.ui())
+                .flatMap(Observable::just)
+                .filter(file -> {
+                    boolean matched = file.name.toLowerCase().endsWith(query);
                     if (matched) {
                         file.query = query;
                     }

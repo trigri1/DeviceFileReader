@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.Objects;
 
 public class FileModel implements Comparable<FileModel>, Serializable {
+
+    private static final String NO_EXTENSION = "NoExtension";
     public String path;
     public String name;
     public long size;
@@ -19,9 +21,16 @@ public class FileModel implements Comparable<FileModel>, Serializable {
 
     public String getExtension() {
         if (path.lastIndexOf(".") != -1) {
-            return path.substring(path.lastIndexOf("."));
+            String ext = path.substring(path.lastIndexOf("."));
+
+            if (ext.contains("/")) {
+                return NO_EXTENSION;
+            } else {
+                return path.substring(path.lastIndexOf("."));
+            }
+
         } else {
-            return "NoExtension";
+            return NO_EXTENSION;
         }
     }
 

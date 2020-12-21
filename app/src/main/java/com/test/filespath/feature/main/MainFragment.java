@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.test.filespath.R;
 import com.test.filespath.feature.base.BaseFragment;
+import com.test.filespath.feature.main.extension.ExtensionsDialog;
 import com.test.filespath.feature.main.reader.FileModel;
 
 import java.io.BufferedWriter;
@@ -38,7 +39,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 
-public class MainFragment extends BaseFragment<MainViewModel> implements FilesAdapter.OnItemClickListener {
+public class MainFragment extends BaseFragment<MainViewModel> implements FilesAdapter.OnItemClickListener, OnExtensionSelectedListener {
 
     public static MainFragment newInstance() {
         return new MainFragment();
@@ -144,6 +145,13 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
                 pbCircular.setVisibility(View.GONE);
             }
         });
+
+        viewModel.extensions.observe(getViewLifecycleOwner(), extensions -> {
+            ExtensionsDialog dialog = new ExtensionsDialog(requireActivity());
+            dialog.setData(extensions);
+            dialog.setOnExtensionSelectedListener(this);
+            dialog.show();
+        });
     }
 
     //https://blog.cindypotvin.com/saving-data-to-a-file-in-your-android-application/
@@ -228,14 +236,14 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.item_search:
-                viewModel.onSortExtension();
-                break;
             case R.id.item_alphabetically:
                 viewModel.onSortAlphabetically();
                 break;
             case R.id.item_chronologically:
                 viewModel.onSortChronologically();
+                break;
+            case R.id.item_extension:
+                viewModel.onSortExtension();
                 break;
         }
 
@@ -245,5 +253,10 @@ public class MainFragment extends BaseFragment<MainViewModel> implements FilesAd
     @Override
     public void OnItemCLick(FileModel fileModel) {
         viewModel.onItemClick(fileModel);
+    }
+
+    @Override
+    public void onExtensionSelected(String extension) {
+        viewModel.onExtensionSelected(extension);
     }
 }
