@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.test.filespath.R;
 import com.test.filespath.feature.base.BaseFragment;
 import com.test.filespath.feature.main.reader.FileModel;
@@ -72,7 +73,9 @@ public class DetailFragment extends BaseFragment<DetailViewModel> {
                 tvFileName.setText(model.path);
                 tvFileSize.setText("Size: " + model.getSizeInMb(requireContext()));
                 tvLastModifiedDate.setText("Last Modified: " + model.getLastModifiedDate());
-                imgFile.setImageURI(model.getFileUri());
+                Glide.with(requireActivity())
+                        .load(fileModel.getFileUri())
+                        .into(imgFile);
             } catch (Exception e) {
                 Log.e("Exception", "setImageURI", e);
             }
